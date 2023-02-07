@@ -9,11 +9,11 @@ from rest_framework import status
 class EventPostTest(APITestCase):
 
     def setUp(self):
-        self.client = APIClient()
         self.user = User.objects.create_superuser('admin', 'admin@admin.com', 'admin123')
-        self.token = Token.objects.create(user=self.user)
-        client = APIClient()
-        client.credentials(HTTP_AUTORIZATION=self.token)
+        Token.objects.create(user=self.user)
+        self.token = self.user.auth_token.__str__()
+        self.client = APIClient()
+        self.client.credentials(HTTP_AUTORIZATION=' Token ' + self.token)
 
     def test_post_event_no_auth(self):
         simple_event = {"event_type": "test_name", "info": "json", "timestamp": "2023-02-06 14:05:50"}
@@ -22,6 +22,5 @@ class EventPostTest(APITestCase):
 
     def test_post_event_auth(self):
         simple_event = {"event_type": "test_name", "info": "json", "timestamp": "2023-02-06 14:05:50"}
-        response = self.client.post(reverse('event'), simple_event,
-                                    headers={'Authorization': 'Token ' + self.token.key})
+        response = self.client.post(reverse('event'), simple_event, HTTP_AUTORIZATION=' Token ' + self.token)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
