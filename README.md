@@ -1,5 +1,5 @@
-                                                          Event management
-
+                                                          <Event management>
+                                                          
 Clone project
 
 Create virtual environments
