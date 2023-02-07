@@ -1,19 +1,19 @@
                                                           <Event management>
                                                           
-Clone project
+1.)Clone project
 
-Create virtual environments
+2.)Create virtual environments
 
-Install requirements from requirements.txt
+3.)Install requirements from requirements.txt
 
-Make migrations:
+4.)Make migrations:
 
 python manage.py makemigrations
 
 python manage.py migrate
 
-Run server:
+5.)Run server:
 
 python manage.py runserver   
 
-AND ENJOY)
+6.) ENJOY)
