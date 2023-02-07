@@ -1,4 +1,4 @@
-                                                                        Event management
+                                                          Event management
 
 Clone project
 
@@ -9,6 +9,7 @@ Install requirements from requirements.txt
 Make migrations:
 
 python manage.py makemigrations
+
 python manage.py migrate
 
 Run server:
