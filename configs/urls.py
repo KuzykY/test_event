@@ -14,12 +14,14 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+
 from django.urls import path
-from event.views import EventView
-from rest_framework.authtoken.views import obtain_auth_token
+from event.views import CreateEventView, EventListView
+
+app_name = 'event'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('event/', EventView.as_view(), name='event'),
-    path('auth/', obtain_auth_token, name="auth"),
+    path('create/', CreateEventView.as_view(), name='create_event'),
+    path('list/', EventListView.as_view(), name='event_list'),
 ]

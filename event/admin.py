@@ -1,9 +1,9 @@
 from django.contrib import admin
-from .models import EventModel, EventTypeModel
+from .models import Event, EventType
 
-admin.site.register(EventTypeModel)
+admin.site.register(EventType)
 
 
-@admin.register(EventModel)
+@admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
     list_filter = ('timestamp', 'event_type')

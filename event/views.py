@@ -1,26 +1,36 @@
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
-from .models import EventTypeModel
-from .serializers import EventSerializer, CreateEventSerializer
+from event.models import EventType, Event
+from event.serializers import EventSerializer
 
 
-class EventView(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
+class CreateEventView(generics.CreateAPIView):
     permission_classes = (IsAuthenticated,)
+    serializer_class = EventSerializer
 
-    def post(self, *args, **kwargs):
-        data = self.request.data
-        request_serializer = CreateEventSerializer(data=data)
-        if not request_serializer.is_valid():
-            return Response(request_serializer.errors, status.HTTP_400_BAD_REQUEST)
-        event_type, created = EventTypeModel.objects.get_or_create(name=data['event_type'])
-        event = {"event_type": event_type.id, "info": data['info'], "timestamp": data['timestamp']}
-        serializer = EventSerializer(data=event)
-        if not serializer.is_valid():
-            return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
-        serializer.save()
-        return Response(serializer.data, status.HTTP_201_CREATED)
+    def create(self, request, *args, **kwargs):
+        event_type_name = request.data.get('event_type', None)
+        info = request.data.get('info', None)
+        timestamp = request.data.get('timestamp', None)
+        user = request.user
+
+        # Якщо event_type, який приходить, немає в базі то створити його.
+        event_type, _ = EventType.objects.get_or_create(name=event_type_name)
+
+        # Зберегти подію
+        event = Event.objects.create(
+            user=user,
+            event_type=event_type,
+            info=info,
+            timestamp=timestamp
+        )
+        serializer = self.get_serializer(event)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class EventListView(generics.ListAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = EventSerializer
+    queryset = Event.objects.all()
